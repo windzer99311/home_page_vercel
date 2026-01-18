@@ -44,7 +44,7 @@ def get_playlist(url:str):
         else:
             title=item[case]["title"]["runs"][0]["text"]
         Thumbnail=item[case]["thumbnail"]["thumbnails"][1]["url"]
-        Url=Url=clean_youtube_url(item[case]["navigationEndpoint"]["commandMetadata"]["webCommandMetadata"]["url"])
+        Url=clean_youtube_url(item[case]["navigationEndpoint"]["commandMetadata"]["webCommandMetadata"]["url"])
         home_data.append({"title":title,"thumbnail":Thumbnail,"url":Url})
     return   {
     "data": home_data,
