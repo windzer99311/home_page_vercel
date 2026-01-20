@@ -3,16 +3,6 @@ import re
 import json
 from fastapi import FastAPI
 app = FastAPI()
-from urllib.parse import urlparse, parse_qs
-
-def clean_youtube_url(url: str) -> str | None:
-    if url.startswith("/"):
-        url = "https://www.youtube.com" + url
-    parsed = urlparse(url)
-    params = parse_qs(parsed.query)
-    vid = params.get("v", [None])[0]
-    return f"https://www.youtube.com/watch?v={vid}" if vid else None
-    
 @app.get("/homepage")
 def get_playlist(url:str):
     home_data=[]
@@ -25,7 +15,7 @@ def get_playlist(url:str):
         raise Exception("ytInitialData not found")
 
     data = json.loads(m.group(1))
-    print(data)
+    # print(data)
     if "playnext" in url:
         case1=True
     else:
@@ -44,8 +34,8 @@ def get_playlist(url:str):
         else:
             title=item[case]["title"]["runs"][0]["text"]
         Thumbnail=item[case]["thumbnail"]["thumbnails"][1]["url"]
-        Url=clean_youtube_url(item[case]["navigationEndpoint"]["commandMetadata"]["webCommandMetadata"]["url"])
-        home_data.append({"title":title,"thumbnail":Thumbnail,"url":Url})
+        Url=item[case]["navigationEndpoint"]["watchEndpoint"]["videoId"]
+        home_data.append({"title":title,"thumbnail":Thumbnail,"videoId":Url})
     return   {
     "data": home_data,
     }
