@@ -51,15 +51,23 @@ def get_next_music(url: str):
     if match:
         json_str = match.group(1)
         data = json.loads(json_str)
-        playlist = data["contents"]["twoColumnWatchNextResults"]["secondaryResults"]["secondaryResults"]["results"]
-        for item in playlist:
-            try:
-                title=item["lockupViewModel"]["metadata"]["lockupMetadataViewModel"]["title"]["content"]
-                Thumbnail="Thumbnail:",item["lockupViewModel"]["contentImage"]["thumbnailViewModel"]["image"]["sources"][0]["url"]
-                Url=item["lockupViewModel"]["metadata"]["lockupMetadataViewModel"]["menuButton"]["buttonViewModel"]["onTap"]["innertubeCommand"]["showSheetCommand"]["panelLoadingStrategy"]["inlineContent"]["sheetViewModel"]["content"]["listViewModel"]["listItems"][0]["listItemViewModel"]["rendererContext"]["commandContext"]["onTap"]["innertubeCommand"]["signalServiceEndpoint"]["actions"][0]["addToPlaylistCommand"]["videoId"]
-                next_music.append({"title": title, "thumbnail": Thumbnail, "videoId": Url})
-            except:
-                continue
+        try:
+            playlist = data["contents"]["twoColumnWatchNextResults"]["playlist"]["playlist"]["contents"]
+            for item in playlist:
+                title = item["playlistPanelVideoRenderer"]["title"]["simpleText"]
+                thumbnail = item["playlistPanelVideoRenderer"]["thumbnail"]["thumbnails"][0]["url"]
+                video_id = item["playlistPanelVideoRenderer"]["navigationEndpoint"]["watchEndpoint"]["videoId"]
+                next_music.append({"title": title, "thumbnail": thumbnail, "videoId": video_id})
+        except:
+            playlist = data["contents"]["twoColumnWatchNextResults"]["secondaryResults"]["secondaryResults"]["results"]
+            for item in playlist:
+                try:
+                    title=item["lockupViewModel"]["metadata"]["lockupMetadataViewModel"]["title"]["content"]
+                    thumbnail=item["lockupViewModel"]["contentImage"]["thumbnailViewModel"]["image"]["sources"][0]["url"]
+                    video_id=item["lockupViewModel"]["metadata"]["lockupMetadataViewModel"]["menuButton"]["buttonViewModel"]["onTap"]["innertubeCommand"]["showSheetCommand"]["panelLoadingStrategy"]["inlineContent"]["sheetViewModel"]["content"]["listViewModel"]["listItems"][0]["listItemViewModel"]["rendererContext"]["commandContext"]["onTap"]["innertubeCommand"]["signalServiceEndpoint"]["actions"][0]["addToPlaylistCommand"]["videoId"]
+                    next_music.append({"title": title, "thumbnail": thumbnail, "videoId": video_id})
+                except:
+                    continue
         return {
             "data": next_music,
         }
