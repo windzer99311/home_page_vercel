@@ -57,6 +57,8 @@ def get_next_music(url: str):
                 title = item["playlistPanelVideoRenderer"]["title"]["simpleText"]
                 thumbnail = item["playlistPanelVideoRenderer"]["thumbnail"]["thumbnails"][0]["url"]
                 video_id = item["playlistPanelVideoRenderer"]["navigationEndpoint"]["watchEndpoint"]["videoId"]
+                if video_id==url.split("watch?v=")[1].split("&")[0]:
+                    continue
                 next_music.append({"title": title, "thumbnail": thumbnail, "videoId": video_id})
         except:
             playlist = data["contents"]["twoColumnWatchNextResults"]["secondaryResults"]["secondaryResults"]["results"]
