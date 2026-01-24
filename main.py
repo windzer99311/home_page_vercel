@@ -39,3 +39,27 @@ def get_playlist(url:str):
     return   {
     "data": home_data,
     }
+@app.get("/next")
+def get_next_music(url: str):
+    next_music = []
+    headers = {"User-Agent": "Mozilla/5.0"}
+    response = requests.get(url, headers=headers).text
+
+    # Extract ytInitialData
+    pattern = r'var ytInitialData = ({.*?});'
+    match = re.search(pattern, response)
+    if match:
+        json_str = match.group(1)
+        data = json.loads(json_str)
+        playlist = data["contents"]["twoColumnWatchNextResults"]["secondaryResults"]["secondaryResults"]["results"]
+        for item in playlist:
+            try:
+                title=item["lockupViewModel"]["metadata"]["lockupMetadataViewModel"]["title"]["content"]
+                Thumbnail="Thumbnail:",item["lockupViewModel"]["contentImage"]["thumbnailViewModel"]["image"]["sources"][0]["url"]
+                Url=item["lockupViewModel"]["metadata"]["lockupMetadataViewModel"]["menuButton"]["buttonViewModel"]["onTap"]["innertubeCommand"]["showSheetCommand"]["panelLoadingStrategy"]["inlineContent"]["sheetViewModel"]["content"]["listViewModel"]["listItems"][0]["listItemViewModel"]["rendererContext"]["commandContext"]["onTap"]["innertubeCommand"]["signalServiceEndpoint"]["actions"][0]["addToPlaylistCommand"]["videoId"]
+                next_music.append({"title": title, "thumbnail": Thumbnail, "videoId": Url})
+            except:
+                continue
+        return {
+            "data": next_music,
+        }
