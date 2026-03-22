@@ -5,6 +5,12 @@ from fastapi import FastAPI
 app = FastAPI()
 @app.get("/homepage")
 def get_playlist(url:str):
+    if "list=RD" in url:
+        video_id = (url.split("list=RD")[1])
+        if "&" in video_id:
+            video_id = video_id.split("&")[0]
+        url=f"https://www.youtube.com/watch?v={video_id}&list=RD{video_id}"
+        return get_next_music(url)
     home_data=[]
     headers = {"User-Agent": "Mozilla/5.0"}
     html = requests.get(url, headers=headers).text
