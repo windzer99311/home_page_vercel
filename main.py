@@ -20,8 +20,8 @@ def get_playlist(url:str):
     if not m:
         raise Exception("ytInitialData not found")
 
+
     data = json.loads(m.group(1))
-    # print(data)
     if "playnext" in url:
         case1=True
     else:
@@ -30,18 +30,23 @@ def get_playlist(url:str):
     if case1:
         case = "playlistPanelVideoRenderer"
         items = data["contents"]["twoColumnWatchNextResults"]["playlist"]["playlist"]["contents"]
+
     else:
         case= "playlistVideoRenderer"
         items = data["contents"]["twoColumnBrowseResultsRenderer"]["tabs"][0]["tabRenderer"]["content"]["sectionListRenderer"][
             "contents"][0]["itemSectionRenderer"]["contents"][0]["playlistVideoListRenderer"]["contents"]
+
     for item in items:
-        if case1:
-            title=item[case]["title"]["simpleText"]
-        else:
-            title=item[case]["title"]["runs"][0]["text"]
-        Thumbnail=item[case]["thumbnail"]["thumbnails"][1]["url"]
-        Url=item[case]["navigationEndpoint"]["watchEndpoint"]["videoId"]
-        home_data.append({"title":title,"thumbnail":Thumbnail,"videoId":Url})
+        try:
+            if case1:
+                title=item[case]["title"]["simpleText"]
+            else:
+                title=item[case]["title"]["runs"][0]["text"]
+            Thumbnail=item[case]["thumbnail"]["thumbnails"][1]["url"]
+            vid_id=item[case]["navigationEndpoint"]["watchEndpoint"]["videoId"]
+            home_data.append({"title":title,"thumbnail":Thumbnail,"videoId":vid_id})
+        except:
+            pass
     return   {
     "data": home_data,
     }
